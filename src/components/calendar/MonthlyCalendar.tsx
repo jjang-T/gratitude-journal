@@ -121,6 +121,9 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
   }, [year, month, diaryByDate, eventsByDate]);
 
   const monthNameKo = `${year}년 ${month + 1}월`;
+  const monthDiariesCount = diaries.filter((d) =>
+    d.date.startsWith(`${year}-${String(month + 1).padStart(2, '0')}`)
+  ).length;
 
   return (
     <div className="calendar-card">
@@ -128,24 +131,25 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
         <div className="calendar-title-wrap">
           <h2 className="calendar-month-title">{monthNameKo}</h2>
           <span className="calendar-sub-stat">
-            감사일기 {diaries.filter((d) => d.date.startsWith(`${year}-${String(month + 1).padStart(2, '0')}`)).length}일
+            감사 {monthDiariesCount}일
           </span>
         </div>
 
         <div className="calendar-nav-buttons">
           {streak > 0 && (
-            <div className="streak-badge" title="연속 작성 일수">
-              <span>{streak}일 연속 작성</span>
+            <div className="streak-badge-mini" title={`연속 ${streak}일 작성 중`}>
+              <span className="streak-clover">☘️</span>
+              <span>{streak}일</span>
             </div>
           )}
           <button className="today-btn" onClick={onToday} type="button">
             오늘
           </button>
-          <button className="icon-btn" onClick={onPrevMonth} title="이전 달" type="button" aria-label="이전 달">
-            <ChevronLeft size={18} />
+          <button className="icon-btn-sm" onClick={onPrevMonth} title="이전 달" type="button" aria-label="이전 달">
+            <ChevronLeft size={16} />
           </button>
-          <button className="icon-btn" onClick={onNextMonth} title="다음 달" type="button" aria-label="다음 달">
-            <ChevronRight size={18} />
+          <button className="icon-btn-sm" onClick={onNextMonth} title="다음 달" type="button" aria-label="다음 달">
+            <ChevronRight size={16} />
           </button>
         </div>
       </div>
@@ -163,12 +167,13 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
       <div className="calendar-grid">
         {calendarCells.map((cell, idx) => {
           if (cell.type === 'empty') {
-            return <div key={`empty-${idx}`} className="calendar-cell empty" />;
+            return <div key={`empty-${idx}`} className="calendar-cell is-empty" />;
           }
 
           const isSelected = selectedDate === cell.dateKey;
           const stickerObj = cell.diary ? STICKERS[cell.diary.sticker] : null;
           const dayEvents = cell.dayEvents || [];
+          const firstEvent = dayEvents[0];
 
           return (
             <div
@@ -185,47 +190,47 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
                 }
               }}
             >
+              {/* Top: Date Number & Photo Indicator */}
               <div className="calendar-cell-top">
                 <span className="calendar-date-num">{cell.day}</span>
-                {cell.diary?.photos && cell.diary.photos.length > 0 && (
+                {cell.diary?.photos && cell.diary.photos.length > 0 ? (
                   <span className="cell-badge-dot" title="사진 첨부됨" />
+                ) : (
+                  <span className="cell-badge-spacer" />
                 )}
               </div>
 
-              {/* Gratitude Sticker */}
+              {/* Middle: Gratitude Sticker (Visual Centerpiece) */}
               <div className="calendar-cell-middle">
                 {stickerObj ? (
                   <span className="calendar-sticker" role="img" aria-label={stickerObj.label}>
                     {stickerObj.emoji}
                   </span>
                 ) : (
-                  <div className="calendar-cell-empty-space" />
+                  <div className="calendar-sticker-placeholder" />
                 )}
               </div>
 
-              {/* Calendar Events Bar / Indicator */}
-              {dayEvents.length > 0 ? (
-                <div className="calendar-cell-events">
-                  {dayEvents.slice(0, 1).map((ev) => (
-                    <div
-                      key={ev.id}
-                      className={`calendar-event-pill ${ev.isCompleted ? 'is-completed' : ''} ${ev.isGoogleSynced ? 'is-gcal' : ''}`}
-                      style={{ borderLeftColor: ev.color }}
-                      title={`${ev.title}${ev.isGoogleSynced ? ' · 구글 캘린더 연동됨' : ''}`}
-                    >
-                      {ev.isGoogleSynced && (
-                        <span className="gcal-cell-dot" title="구글 캘린더 연동됨" />
-                      )}
-                      <span className="event-pill-text">{ev.title}</span>
-                    </div>
-                  ))}
-                  {dayEvents.length > 1 && (
-                    <span className="calendar-event-more">+{dayEvents.length - 1}</span>
-                  )}
-                </div>
-              ) : (
-                <div className="calendar-cell-events-placeholder" />
-              )}
+              {/* Bottom: Warm Schedule Event Chip (Fixed height across all tiles) */}
+              <div className="calendar-cell-bottom">
+                {firstEvent ? (
+                  <div
+                    className={`calendar-event-chip ${firstEvent.isCompleted ? 'is-completed' : ''} ${firstEvent.isGoogleSynced ? 'is-gcal' : ''}`}
+                    title={`${firstEvent.title}${firstEvent.time ? ` (${firstEvent.time})` : ''}${firstEvent.isGoogleSynced ? ' · 구글 캘린더 연동됨' : ''}`}
+                  >
+                    <span
+                      className="event-chip-dot"
+                      style={{ backgroundColor: firstEvent.color || 'var(--accent-primary)' }}
+                    />
+                    <span className="event-chip-text">{firstEvent.title}</span>
+                    {dayEvents.length > 1 && (
+                      <span className="event-chip-more">+{dayEvents.length - 1}</span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="calendar-event-spacer" />
+                )}
+              </div>
             </div>
           );
         })}

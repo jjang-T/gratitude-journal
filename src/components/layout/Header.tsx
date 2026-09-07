@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus, Cloud, Calendar, BookOpen, Trophy } from 'lucide-react';
 import type { ActiveTab } from '../../types';
+import { CloverIcon } from '../common/CloverIcon';
 
 interface HeaderProps {
   activeTab: ActiveTab;
@@ -22,11 +23,11 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="header-inner">
         <div className="brand" onClick={() => setActiveTab('calendar')}>
           <div className="brand-icon">
-            <span style={{ fontSize: '18px' }}>🌸</span>
+            <CloverIcon size={22} color="#2D5A3C" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="brand-title">하루 일기</span>
+              <span className="brand-title">하루 감사</span>
               <span className="brand-badge">Web & iOS</span>
             </div>
           </div>

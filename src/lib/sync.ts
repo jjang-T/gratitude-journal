@@ -4,6 +4,16 @@ import type { SupabaseSettings } from '../types';
 const SETTINGS_KEY = 'haru_gratitude_supabase_settings';
 
 export function getSupabaseSettings(): SupabaseSettings {
+  const envUrl = (import.meta as any).env?.VITE_SUPABASE_URL || '';
+  const envKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '';
+  if (envUrl && envKey) {
+    return {
+      supabaseUrl: envUrl,
+      supabaseAnonKey: envKey,
+      syncEnabled: true,
+    };
+  }
+
   try {
     const saved = localStorage.getItem(SETTINGS_KEY);
     if (saved) return JSON.parse(saved);

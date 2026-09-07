@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Cloud, Calendar, BookOpen, Trophy } from 'lucide-react';
+import { Plus, Calendar, BookOpen, Trophy } from 'lucide-react';
 import type { ActiveTab } from '../../types';
 import { CloverIcon } from '../common/CloverIcon';
 
@@ -7,7 +7,6 @@ interface HeaderProps {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
   onOpenWriteModal: () => void;
-  onOpenSyncModal: () => void;
   streakCount: number;
 }
 
@@ -15,7 +14,6 @@ export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
   onOpenWriteModal,
-  onOpenSyncModal,
   streakCount,
 }) => {
   return (
@@ -68,16 +66,6 @@ export const Header: React.FC<HeaderProps> = ({
               <span>연속 {streakCount}일</span>
             </div>
           )}
-
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={onOpenSyncModal}
-            title="클라우드 동기화 및 백업"
-            aria-label="동기화 설정"
-          >
-            <Cloud size={17} />
-          </button>
 
           <button
             type="button"

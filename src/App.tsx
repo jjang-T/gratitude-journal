@@ -7,7 +7,6 @@ import { DiaryEditorModal } from './components/diary/DiaryEditorModal';
 import { EventSection } from './components/calendar/EventSection';
 import { EventEditorModal } from './components/calendar/EventEditorModal';
 import { BucketSection } from './components/bucket/BucketSection';
-import { SyncModal } from './components/sync/SyncModal';
 import { useGratitudeData } from './hooks/useGratitudeData';
 import type { DiaryEntry, BucketItem, CalendarEvent, ActiveTab } from './types';
 import { formatDateKey } from './data/mockData';
@@ -18,7 +17,6 @@ export const App: React.FC = () => {
     diaries,
     bucketItems,
     events,
-    isSyncing,
     saveDiary,
     deleteDiary,
     addEvent,
@@ -29,9 +27,6 @@ export const App: React.FC = () => {
     addBucketItem,
     toggleBucketItem,
     deleteBucketItem,
-    syncWithCloud,
-    exportData,
-    importData,
   } = useGratitudeData();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>('calendar');
@@ -42,7 +37,6 @@ export const App: React.FC = () => {
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
   const [editingDiary, setEditingDiary] = useState<DiaryEntry | null>(null);
   const [preselectedBucketId, setPreselectedBucketId] = useState<string | undefined>();
-  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
 
   // Event modal state
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -154,7 +148,6 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenWriteModal={() => handleOpenWriteForDate()}
-        onOpenSyncModal={() => setIsSyncModalOpen(true)}
         streakCount={streakCount}
       />
 
@@ -335,7 +328,6 @@ export const App: React.FC = () => {
       <MobileNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenSyncModal={() => setIsSyncModalOpen(true)}
       />
 
       {/* Write/Edit Gratitude Diary Modal */}
@@ -363,16 +355,6 @@ export const App: React.FC = () => {
         onSave={handleSaveEvent}
         initialDate={selectedDate}
         existingEvent={editingEvent}
-      />
-
-      {/* Cloud & iOS Sync Modal */}
-      <SyncModal
-        isOpen={isSyncModalOpen}
-        onClose={() => setIsSyncModalOpen(false)}
-        onSyncNow={syncWithCloud}
-        isSyncing={isSyncing}
-        onExport={exportData}
-        onImport={importData}
       />
     </div>
   );

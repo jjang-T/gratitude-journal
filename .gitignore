@@ -27,4 +27,4 @@ dist-ssr
 !.env.example
 .vercel
 
-.vercel
+supabase/.temp

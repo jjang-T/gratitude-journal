@@ -1,4 +1,4 @@
-﻿-- Migration: Initial Schema for Gratitude Journal
+-- Migration: Initial Schema for Gratitude Journal
 CREATE TABLE IF NOT EXISTS diaries (
   id TEXT PRIMARY KEY,
   date TEXT NOT NULL,
@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS diaries (
   gratitude_items JSONB DEFAULT '[]'::jsonb,
   content TEXT,
   photos JSONB DEFAULT '[]'::jsonb,
+  location JSONB DEFAULT NULL,
+  weather JSONB DEFAULT NULL,
   linked_bucket_id TEXT,
   linked_bucket_title TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -19,6 +21,7 @@ CREATE TABLE IF NOT EXISTS bucket_items (
   target_date TEXT,
   is_completed BOOLEAN DEFAULT FALSE,
   completed_at TEXT,
+  achievement_diary_id TEXT,
   notes TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -42,6 +45,12 @@ ALTER TABLE diaries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bucket_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY  Allow public read-write for diaries ON diaries FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY Allow public read-write for bucket_items ON bucket_items FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY Allow public read-write for events ON events FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public read-write for diaries" ON diaries;
+CREATE POLICY "Allow public read-write for diaries" ON diaries FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public read-write for bucket_items" ON bucket_items;
+CREATE POLICY "Allow public read-write for bucket_items" ON bucket_items FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public read-write for events" ON events;
+CREATE POLICY "Allow public read-write for events" ON events FOR ALL USING (true) WITH CHECK (true);
+
